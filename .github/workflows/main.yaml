@@ -1,38 +1,25 @@
-name: ci/cd pipeline to deploy to tomcat
+
 on:
-  push:
-    branches: master
+  push:
+    branches: [ master ]
+
 jobs:
-  build-deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout code
-        uses: actions/checkout@v3
+  build-deploy:
+    runs-on: ubuntu-latest
 
-       - name: setup jdk
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'   # Updated Java version
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4
 
-      - name: validate with maven
-        run: mvn validate
+      - name: setup jdk
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
 
-      - name: compile with maven
-        run: mvn compile
-
-      - name: test with maven
-        run: mvn test
-
-      - name: package with maven
-        run: mvn clean package
-
-      - name: verify WAR file
-        run: ls -lh target/
-
-      - name: Build, Test and SonarQube Scan
-        run: |
-          mvn clean verify sonar:sonar \
-             -Dsonar.projectKey=train-ticket-reservation \
-             -Dsonar.host.url=${{ secrets.SONAR_HOST }} \
-             -Dsonar.login=${{ secrets.SONAR_TOKEN }}           
+      - name: build and analyze with sonar
+        run: |
+          mvn clean verify sonar:sonar \
+            -Dsonar.projectKey=train-ticket-reservation \
+            -Dsonar.host.url=${{ secrets.SONAR_HOST }} \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
