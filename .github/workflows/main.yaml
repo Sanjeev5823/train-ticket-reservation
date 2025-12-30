@@ -1,4 +1,4 @@
-name: CI/CD pipeline for Tomcat (DEV, TEST, PRE-PROD, PROD)
+name: CI/CD pipeline for SonarQube
 
 on:
   push:
